@@ -12,6 +12,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import AddAdress from "./pages/AddAdress";
 import MyOrder from "./pages/MyOrder";
+import Contact from "./pages/Contact";
 
 const App = () => {
 const issSellerPath = useLocation().pathname.includes("seller");
@@ -45,6 +46,9 @@ const {showUserLogin} = useAppContext();
   </Routes>
   <Routes>
     <Route path="/my-orders" element={<MyOrder/>}/>
+  </Routes>
+  <Routes>
+    <Route path="/contact" element={<Contact/>}/>
   </Routes>
    </div>
   { !issSellerPath && <Footer/>}
