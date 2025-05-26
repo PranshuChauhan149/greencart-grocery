@@ -2,28 +2,29 @@ import React from "react";
 import { useAppContext } from "../context/AppContext";
 
 const Login = () => {
-  const { setUserLogin } = useAppContext();
+  const { setUserLogin, setuser } = useAppContext(); 
   const [state, setState] = React.useState("login");
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
-
-  const onSubmitHandler = async (event)=>{
+  const onSubmitHandler = async (event) => {
     event.preventDefault();
-    setUser({
-      email: "pranshuchauhan149@gamil.com",
-      name:"pranshu"
-    })
-    setUserLogin(false);
-  }
+  
+    setuser({
+      email,
+      name: state === "login" ? "User" : name 
+    });
+    setUserLogin(false); 
+  };
 
   return (
     <div
       onClick={() => setUserLogin(false)}
       className="fixed top-0 bottom-0 left-0 right-0 z-30 flex items-center text-sm text-gray-600 bg-black/50"
     >
-      <form onSubmit={onSubmitHandler}
+      <form
+        onSubmit={onSubmitHandler}
         onClick={(e) => e.stopPropagation()}
         className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px] rounded-lg shadow-xl border border-gray-200 bg-white"
       >
@@ -31,6 +32,7 @@ const Login = () => {
           <span className="text-primary">User</span>{" "}
           {state === "login" ? "Login" : "Sign Up"}
         </p>
+
         {state === "register" && (
           <div className="w-full">
             <p>Name</p>
@@ -44,7 +46,8 @@ const Login = () => {
             />
           </div>
         )}
-        <div className="w-full ">
+
+        <div className="w-full">
           <p>Email</p>
           <input
             onChange={(e) => setEmail(e.target.value)}
@@ -55,7 +58,8 @@ const Login = () => {
             required
           />
         </div>
-        <div className="w-full ">
+
+        <div className="w-full">
           <p>Password</p>
           <input
             onChange={(e) => setPassword(e.target.value)}
@@ -66,9 +70,10 @@ const Login = () => {
             required
           />
         </div>
+
         {state === "register" ? (
           <p>
-            Already have account?{" "}
+            Already have an account?{" "}
             <span
               onClick={() => setState("login")}
               className="text-primary cursor-pointer"
@@ -87,6 +92,7 @@ const Login = () => {
             </span>
           </p>
         )}
+
         <button className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
           {state === "register" ? "Create Account" : "Login"}
         </button>

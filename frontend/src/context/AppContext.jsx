@@ -18,7 +18,7 @@ export const AppContextProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState({});
   const [searchquery, setsearchquery] = useState({});
 
-  const currency = import.meta.VITE_CURRENCY;
+  const currency = import.meta.env.VITE_CURRENCY;
 
   const fetchProducts = async () => {
     setProduct(dummyProducts);
@@ -67,17 +67,17 @@ export const AppContextProvider = ({ children }) => {
     return totalCount;
   }
 
-  const getCartTotalAmount =()=>{
-    const totalAmount = 0;
-    for(const items in cartItems){
-      let itemInfo  = Product.find((product)=>product._id===items);
-      if(cartItems[items]>0){
-        totalAmount + itemInfo.offerPrice * cartItems[items];
-      }
+const getCartTotalAmount = () => {
+  let totalAmount = 0;
+  for (const itemId in cartItems) {
+    let itemInfo = Product.find(product => product._id === itemId);
+    if (itemInfo && cartItems[itemId] > 0) {
+      totalAmount += itemInfo.offerPrice * cartItems[itemId];
     }
-
-    return Math.floor(totalAmount* 100 )/100;
   }
+  return Math.floor(totalAmount * 100) / 100;
+};
+
 
   const value = {
     navigate,
