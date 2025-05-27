@@ -6,7 +6,7 @@ export const register  = async (req,res)=>{
   try{
     const {name,email,password} = req.body;
     if(!name || !email || !password){
-      return res.json(res.json({succss : false,message}))
+      return res.json({success : false,message: "All fields are required" })
     }
 
     const existingUser = await User.findOne({email})
@@ -41,24 +41,24 @@ export const Login =async (req,res) =>{
   try{
     const {email,password} = req.body;
     if(!email || !password){
-      res.json({success : false ,meassage :  'Email and password are required'});
+      return res.json({success : false ,message :  'Email and password are required'});
     }
     const user = await User.findOne({email});
 
     if(!user){
-      res.json({success : false ,meassage :  'Invalid email or password'});
+      res.json({success : false ,message :  'Invalid email or password'});
     }
 
     const isMatch = await bcrypt.compare(password,user.password)
 
     if(!isMatch){
-      res.json({success : false ,meassage :  'Invalid Email and password'});
+      res.json({success : false ,message :  'Invalid Email and password'});
     }
 
     const token  = jwt.sign({id : user._id},process.env.JWT_SECRET,{expiresIn:'7d'});
     res.cookie('token',token, {
       httpOnly:true,
-      secure:process.env.NODE_ENV === 'production' ,
+      secure: process.env.NODE_ENV === 'production' ,
       sameSite : process.env.NODE_ENV === 'production' ? 'none' : 'strict',
       maxAge : 7 *24 * 60 *60 *1000,
     });
@@ -66,6 +66,39 @@ export const Login =async (req,res) =>{
     return res.json({success : true ,user : {email : user.email,name:user.name}})
   }
   catch(error) {
+    res.json({success : false ,message : error.message})
+  }
+}
+
+
+//check Auth : /api/user/is-auth
+
+export const isAuth = async (req, res) => {
+  try {
+    const userId = req.userId; 
+    if (!userId) {
+      return res.json({ success: false, message: "User not authenticated" });
+    }
+    const user = await User.findById(userId).select("-password");
+    return res.json({ success: true, message: user });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+
+// logout User
+
+export const logout = async (req,res) => {
+  try{
+    res.clearCookie('token',{
+      httpOnly:true,
+      secure:process.env.NODE_ENV === 'production',
+      sameSite:process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+    });
+    return res.json({success : true ,message : "Logged Out"})
+  }
+   catch(error) {
     res.json({success : false ,message : error.message})
   }
 }
