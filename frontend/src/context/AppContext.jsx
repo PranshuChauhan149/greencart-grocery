@@ -5,6 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { dummyProducts } from "../greencart_assets/assets";
 import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
+
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 
 export const AppContext = createContext();
 
@@ -19,6 +23,22 @@ export const AppContextProvider = ({ children }) => {
   const [searchquery, setsearchquery] = useState({});
 
   const currency = import.meta.env.VITE_CURRENCY;
+
+  const fetchSeller = async ()=>{
+    try{
+      const {data} = await axios.get('/api/seller/is-auth')
+      if(data.success){
+        setseller(true);
+      }
+      else{
+        setseller(false);
+      }
+    }
+    catch(error){
+      setseller(false)
+
+    }
+  }
 
   const fetchProducts = async () => {
     setProduct(dummyProducts);
@@ -55,29 +75,28 @@ export const AppContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    fetchSeller();
     fetchProducts();
   }, []);
 
-
   const getCartCount = () => {
     let totalCount = 0;
-    for(const item in cartItems){
+    for (const item in cartItems) {
       totalCount += cartItems[item];
     }
     return totalCount;
-  }
+  };
 
-const getCartTotalAmount = () => {
-  let totalAmount = 0;
-  for (const itemId in cartItems) {
-    let itemInfo = Product.find(product => product._id === itemId);
-    if (itemInfo && cartItems[itemId] > 0) {
-      totalAmount += itemInfo.offerPrice * cartItems[itemId];
+  const getCartTotalAmount = () => {
+    let totalAmount = 0;
+    for (const itemId in cartItems) {
+      let itemInfo = Product.find((product) => product._id === itemId);
+      if (itemInfo && cartItems[itemId] > 0) {
+        totalAmount += itemInfo.offerPrice * cartItems[itemId];
+      }
     }
-  }
-  return Math.floor(totalAmount * 100) / 100;
-};
-
+    return Math.floor(totalAmount * 100) / 100;
+  };
 
   const value = {
     navigate,
@@ -97,6 +116,7 @@ const getCartTotalAmount = () => {
     searchquery,
     getCartCount,
     getCartTotalAmount,
+    axios,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

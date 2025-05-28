@@ -1,4 +1,6 @@
+import connectCloudinary from "../config/Cloudniary.js";
 import Product from "../models/Product.js";
+import upload from '../config/multer.js';
 
 
 export const addProduct = async (req,res)=>{
@@ -7,7 +9,7 @@ try{
 
   const images = req.files
   let imagesUrl = await Promise.all(
-    images.amp(async (item)=>{
+    images.map(async (item)=>{
       let result  = await connectCloudinary.uploader.upload(item.path,{
         resource_type : 'image'
       });
