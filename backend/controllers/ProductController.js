@@ -1,30 +1,26 @@
-import connectCloudinary from "../config/Cloudniary.js";
+import { v2 as cloudinary } from 'cloudinary';
 import Product from "../models/Product.js";
-import upload from '../config/multer.js';
 
-
-export const addProduct = async (req,res)=>{
+export const addProduct = async (req, res) => {
 try{
-  let productData = JSON.parse(req.body.productData);
-
+  let productData = JSON.parse(req.body.productData)
   const images = req.files
-  let imagesUrl = await Promise.all(
+  let imageUrl = await Promise.all(
     images.map(async (item)=>{
-      let result  = await connectCloudinary.uploader.upload(item.path,{
-        resource_type : 'image'
+      let result = await cloudinary.uploader.upload(item.path,{
+        resource_type:'image'
       });
       return result.secure_url
     })
   )
-  await Product.create({...productData,image : imagesUrl})
 
-  res.json({success  : true ,message : "Product Added"})
+  await Product.create({...productData,image:imageUrl})
+  res.json({success:true,message:"Product Added"})
 }
-catch(error){
-  res.json({success  : false ,message : error.message})
-}
-}
-
+  catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 
 
 export const productList = async (req,res)=>{

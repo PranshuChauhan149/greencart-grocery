@@ -7,15 +7,10 @@ const ProductSchema = new mongoose.Schema(
         type:String,
         required :true
       },
-      
          description : {
         type:Array,
         required :true,
        
-      },
-         name : {
-        type:String,
-        required :true
       },
          price : {
         type:Number,
@@ -30,10 +25,9 @@ const ProductSchema = new mongoose.Schema(
         required :true,
       },
          category : {
-        type:String,
+        type: Array,
         required :true,
       },
-
          inStock : {
         type:Boolean,
         default:true
@@ -41,7 +35,7 @@ const ProductSchema = new mongoose.Schema(
   
     },{timestamps:true});
   
-    const Product = mongoose.model.product ||  mongoose.model("product",ProductSchema);
+    const Product = mongoose.models.product ||  mongoose.model("product",ProductSchema);
   
   
     export default Product;
