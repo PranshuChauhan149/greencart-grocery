@@ -16,7 +16,7 @@ import Contact from "./pages/Contact";
 import SellerLogin from "./components/Seller/SellerLogin";
 import SellerLayout from "./pages/Seller/SellerLayout";
 import AddProduct from "./pages/Seller/AddProduct";
-import ProductList from "./components/Seller/ProductList";
+import ProductList from "./pages/Seller/ProductList";
 import Orders from "./components/Seller/Orders";
 
 const App = () => {

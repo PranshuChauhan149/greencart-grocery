@@ -13,9 +13,9 @@ productRouter.post("/add", upload.array('images'), authSeller, addProduct);
 productRouter.get("/list", productList);
 
 // Get product by ID
-productRouter.get("/id/:id", productById);
-
+productRouter.get("/id", productById);
+ 
 // Change stock (secured route, needs seller auth)
-productRouter.patch("/stock/:id", authSeller, changeStock);
+productRouter.post("/stock", authSeller, changeStock);
 
 export default productRouter;

@@ -24,24 +24,30 @@ export const AppContextProvider = ({ children }) => {
 
   const currency = import.meta.env.VITE_CURRENCY;
 
-  const fetchSeller = async ()=>{
-    try{
-      const {data} = await axios.get('/api/seller/is-auth')
-      if(data.success){
+  const fetchSeller = async () => {
+    try {
+      const { data } = await axios.get("/api/seller/is-auth");
+      if (data.success) {
         setseller(true);
-      }
-      else{
+      } else {
         setseller(false);
       }
+    } catch (error) {
+      setseller(false);
     }
-    catch(error){
-      setseller(false)
-
-    }
-  }
+  };
 
   const fetchProducts = async () => {
-    setProduct(dummyProducts);
+    try {
+      const { data } = await axios.get("/api/product/list");
+      if (data.success) {
+        setProduct(data.product);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   const addToCart = (itemId) => {
@@ -117,6 +123,7 @@ export const AppContextProvider = ({ children }) => {
     getCartCount,
     getCartTotalAmount,
     axios,
+    fetchProducts,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
