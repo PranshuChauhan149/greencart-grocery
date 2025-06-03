@@ -37,20 +37,17 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
-const fetchUser = async ()=>{
-  try{
-    const {data} = await axios.get('api/user/is-auth');
-    if(data.success){
-      setuser(data.user);
-      setCartItems(data.user.cartItems)
+  const fetchUser = async () => {
+    try {
+      const { data } = await axios.get("api/user/is-auth");
+      if (data.success) {
+        setuser(data.user);
+        setCartItems(data.user.cartItems);
+      }
+    } catch (error) {
+      setuser(null);
     }
-
-  }
-  catch(error){
-    setuser(null);
-  }
-}
-
+  };
 
   const fetchProducts = async () => {
     try {
@@ -101,6 +98,27 @@ const fetchUser = async ()=>{
     fetchUser();
   }, []);
 
+  useEffect(() => {
+  const updateCart = async () => {
+    try {
+      const { data } = await axios.post("/api/cart/update", {
+        userId: user._id,
+        cartItems,
+      });
+      if (!data.success) {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  if (user) {
+    updateCart();
+  }
+}, [cartItems]);
+
+
   const getCartCount = () => {
     let totalCount = 0;
     for (const item in cartItems) {
@@ -140,6 +158,7 @@ const fetchUser = async ()=>{
     getCartTotalAmount,
     axios,
     fetchProducts,
+    setCartItems,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

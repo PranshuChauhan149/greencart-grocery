@@ -4,9 +4,13 @@ import Product from "../models/Product.js";
 // Place Order - COD
 export const placeOrderCOD = async (req, res) => {
   try {
-    const { userId, items, address } = req.body;
+    const { userId, items, address } = req.body;  // Added userId extraction
 
-    if (!address || items.length === 0) {
+    if (!userId) {
+      return res.json({ success: false, message: "User ID is required" });
+    }
+
+    if (!address || !items || items.length === 0) {
       return res.json({ success: false, message: "Invalid data" });
     }
 
@@ -39,7 +43,11 @@ export const placeOrderCOD = async (req, res) => {
 // Get Orders for a User
 export const getUserOrders = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req.query; // ✅ Use query instead of body
+
+    if (!userId) {
+      return res.json({ success: false, message: "User ID is required" });
+    }
 
     const orders = await Order.find({
       userId,
@@ -49,11 +57,12 @@ export const getUserOrders = async (req, res) => {
       .populate("address")
       .sort({ createdAt: -1 });
 
-    return res.json({ success: true, data: orders });
+    return res.json({ success: true, orders });
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }
 };
+
 
 // Get All Orders (Admin)
 export const getAllOrders = async (req, res) => {

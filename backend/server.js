@@ -43,9 +43,10 @@ app.use('/api/cart',cartRouter)
 app.use('/api/address',addressRouter)
 app.use('/api/order',orderRouter)
 
-app.get("/",(req,res)=>{
-res.send("hello");
-})
+app.get("/", (req, res) => {
+  res.send("Hello, server is running");
+});
+
 
 app.listen(PORT,()=>{
   console.log(`app is run on this port${PORT}`);

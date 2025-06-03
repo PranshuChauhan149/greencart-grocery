@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { assets } from "../greencart_assets/assets";
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
 const AddAdress = () => {
+  const { navigate, axios, user } = useAppContext();
+
   const [address, setAddress] = useState({
     firstName: "",
     lastName: "",
+    email: "",
     phone: "",
     street: "",
     city: "",
@@ -18,11 +23,26 @@ const AddAdress = () => {
     setAddress((prev) => ({ ...prev, [name]: value }));
   };
 
-  const onSubmithandler = (e) => {
+  const onSubmithandler = async (e) => {
     e.preventDefault();
-    console.log("Address submitted:", address);
-    // You can send address to backend here (API call)
+    try {
+      const { data } = await axios.post("/api/address/add", {userId:user._id ,address });
+      if (data.success) {
+        toast.success(data.message);
+        navigate('/cart')
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/cart");
+    }
+  }, []);
 
   return (
     <div className="mt-16 pb-14">
@@ -52,6 +72,16 @@ const AddAdress = () => {
                 required
               />
             </div>
+
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={address.email}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded"
+              required
+            />
 
             <input
               type="text"

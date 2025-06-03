@@ -1,18 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import { dummyAddress, dummyOrders } from "../greencart_assets/assets";
+import axios from "axios";
 
 const MyOrder = () => {
   const [myOrder, setMyOrders] = useState([]);
-  const { currency } = useAppContext();
+  const { currency,user,axios } = useAppContext();
 
-  const fetchMyOrder = async () => {
-    setMyOrders(dummyOrders);
-  };
+ const fetchMyOrder = async () => {
+  try {
+    const { data } = await axios.get(`/api/order/user?userId=${user._id}`); 
+    console.log(data);
+    if (data.success) {
+      setMyOrders(data.orders);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 
   useEffect(() => {
-    fetchMyOrder();
-  }, []);
+    if (user) {
+      fetchMyOrder();
+    }
+  }, [user]);
 
   return (
     <div className="mt-16 pb-16">
@@ -67,10 +79,9 @@ const MyOrder = () => {
                 <p className="font-medium">
                   Date : {new Date(order.createdAt).toLocaleDateString()}
                 </p>
-                </div>
+              </div>
 
               <div className="flex flex-col text-sm text-gray-700 gap-1">
-                
                 <p className="font-semibold text-primary">
                   Amount : {currency}
                   {item.product.offerPrice * item.quantity}

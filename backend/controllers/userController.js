@@ -90,7 +90,8 @@ export const isAuth = async (req, res) => {
       return res.status(401).json({ success: false, message: "User not authenticated" });
     }
 
-    const user = await User.findById(userId).select("-password");
+  const user = await User.findById(userId).select('-password');
+
 
     return res.status(200).json({ success: true, user });
 

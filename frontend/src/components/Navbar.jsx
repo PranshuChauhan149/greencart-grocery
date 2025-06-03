@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { assets } from "../greencart_assets/assets";
 import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 const Navbar = () => {
   const {
     user,
@@ -11,12 +12,23 @@ const Navbar = () => {
     setsearchquery,
     getCartCount,
     searchquery,
+    axios,
   } = useAppContext();
   const [open, setOpen] = React.useState(false);
 
   const logout = async () => {
-    setuser(null);
-    navigate("/");
+    try {
+      const { data } = await axios.get("/api/user/logout");
+      if (data.success) {
+        toast.success(data.message);
+        setuser(null);
+        navigate("/");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   useEffect(() => {
